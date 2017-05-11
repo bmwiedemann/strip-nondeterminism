@@ -21,7 +21,7 @@ package File::StripNondeterminism::handlers::gzip;
 use strict;
 use warnings;
 
-use File::StripNondeterminism::Common qw(copy_data);
+use File::StripNondeterminism::Common qw(copy_data clamp_or_set_mtime);
 use File::Temp;
 use File::Basename;
 
@@ -60,10 +60,7 @@ sub normalize {
 	unless ($mtime == 0)
 	{	# Don't set a deterministic timestamp if there wasn't already a timestamp
 		if (defined $File::StripNondeterminism::canonical_time) {
-			if (  !$File::StripNondeterminism::clamp_time
-				|| $mtime > $File::StripNondeterminism::canonical_time) {
-				$mtime = $File::StripNondeterminism::canonical_time;
-			}
+			clamp_or_set_mtime $mtime;
 		} else {
 			$mtime = 0; # gzip treats 0 as "no timestamp"
 		}

@@ -20,7 +20,7 @@ package File::StripNondeterminism::Common;
 
 require Exporter;
 @ISA = qw(Exporter);
-@EXPORT_OK = qw(copy_data);
+@EXPORT_OK = qw(copy_data clamp_or_set_mtime);
 
 use strict;
 use warnings;
@@ -40,6 +40,15 @@ sub copy_data {
 	my $to_path = shift;
 
 	return copy($from_path, $to_path);
+}
+
+# param is both input and output
+sub clamp_or_set_mtime($)
+{
+	if ( !$File::StripNondeterminism::clamp_time
+		|| $_[0] > $File::StripNondeterminism::canonical_time) {
+		$_[0] = $File::StripNondeterminism::canonical_time;
+	}
 }
 
 1;
